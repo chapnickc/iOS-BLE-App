@@ -21,8 +21,10 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 
     var centralManager: CBCentralManager?
     var peripherals: [DisplayPeripheral] = []
+   
     
     @IBOutlet weak var tableView: UITableView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

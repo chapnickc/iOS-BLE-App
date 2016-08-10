@@ -10,14 +10,14 @@ import UIKit
 
 class DeviceTableViewCell: UITableViewCell {
     
-    
     @IBOutlet weak var deviceNameLabel: UILabel!
+    
     
     var displayPeripheral: DisplayPeripheral? {
 		didSet {
 			if let deviceName = displayPeripheral!.peripheral?.name{
 				deviceNameLabel.text = deviceName.isEmpty ? "No Device Name" : deviceName
-			}
+            }
             else{
 				deviceNameLabel.text = "No Device Name"
 			}
