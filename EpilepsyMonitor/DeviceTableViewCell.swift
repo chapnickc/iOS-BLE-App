@@ -11,16 +11,20 @@ import UIKit
 class DeviceTableViewCell: UITableViewCell {
     
     @IBOutlet weak var deviceNameLabel: UILabel!
-    
+    @IBOutlet weak var deviceRssiLabel: UILabel!
     
     var displayPeripheral: DisplayPeripheral? {
 		didSet {
-			if let deviceName = displayPeripheral!.peripheral?.name{
+			if let deviceName = displayPeripheral!.peripheral?.name {
 				deviceNameLabel.text = deviceName.isEmpty ? "No Device Name" : deviceName
             }
-            else{
+            else {
 				deviceNameLabel.text = "No Device Name"
 			}
+            
+            if let rssi = displayPeripheral!.lastRSSI {
+                deviceRssiLabel.text = "\(rssi) dB"
+            }
         }
     }
 

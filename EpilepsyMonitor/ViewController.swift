@@ -21,9 +21,11 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 
     var centralManager: CBCentralManager?
     var peripherals: [DisplayPeripheral] = []
+    var viewReloadTimer: NSTimer?
    
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var scanButton: UIButton!
     
     
     override func viewDidLoad() {
@@ -31,7 +33,37 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         tableView.dataSource = self
 		centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
     }
+    
+    
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		viewReloadTimer =
+            NSTimer.scheduledTimerWithTimeInterval(1.0,
+                                                   target: self,
+                                                   selector: #selector(ViewController.refreshScanView),
+                                                   userInfo: nil,
+                                                   repeats: true)
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		viewReloadTimer?.invalidate()
+	}
+    
+    func refreshScanView() {
+        if peripherals.count > 1 && centralManager!.isScanning {
+            tableView.reloadData()
+		}
+    }
 
+    @IBAction func scanButtonPressed(sender: AnyObject) {
+        if centralManager!.isScanning {
+			centralManager?.stopScan()
+		}
+        else {
+			startScanning()
+		}
+    }
     
     // MARK: CBCentralManagerDelegate
     
@@ -39,6 +71,15 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         print("Starting Scan")
 		peripherals = []
 		self.centralManager?.scanForPeripheralsWithServices(nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+        
+        let triggerTime = (Int64(NSEC_PER_SEC) * 10)
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime),
+		               dispatch_get_main_queue(),
+		               { () -> Void in
+                            if self.centralManager!.isScanning {
+                                self.centralManager?.stopScan()
+                            }
+                       })
 	}
     
     func centralManagerDidUpdateState(central: CBCentralManager) {
@@ -52,7 +93,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
     
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
     	for (index, foundPeripheral) in peripherals.enumerate(){
-			if foundPeripheral.peripheral?.identifier == peripheral.identifier{
+			if foundPeripheral.peripheral?.identifier == peripheral.identifier {
 				peripherals[index].lastRSSI = RSSI
 				return
 			}
@@ -76,8 +117,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cellIdentifier = "DeviceTableViewCell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier, forIndexPath: indexPath) as! DeviceTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceTableViewCell", forIndexPath: indexPath) as! DeviceTableViewCell
         
         cell.displayPeripheral = peripherals[indexPath.row]
         return cell

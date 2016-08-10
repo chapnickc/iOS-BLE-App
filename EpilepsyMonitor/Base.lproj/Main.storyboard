@@ -57,6 +57,7 @@
                                         <color key="backgroundColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <outlet property="deviceNameLabel" destination="4Kp-h6-MIR" id="AuK-AK-Yx0"/>
+                                            <outlet property="deviceRssiLabel" destination="5D6-sh-Vb9" id="LXP-1G-Y2H"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -68,12 +69,16 @@
                                 <state key="normal" title="Scan">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="scanButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="n7h-wR-4Bo"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
+                        <outlet property="scanButton" destination="pbT-qk-Hvr" id="BJD-Kc-gcA"/>
                         <outlet property="tableView" destination="EmS-d6-WLf" id="s1k-Kx-6wF"/>
                     </connections>
                 </viewController>
