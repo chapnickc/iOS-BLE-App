@@ -17,15 +17,12 @@ struct DisplayPeripheral{
 }
 
 
-
-
 class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerDelegate {
 
     var centralManager: CBCentralManager?
     var peripherals: [DisplayPeripheral] = []
     
     @IBOutlet weak var tableView: UITableView!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,12 +32,12 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 
     
     // MARK: CBCentralManagerDelegate
+    
    	func startScanning(){
         print("Starting Scan")
 		peripherals = []
 		self.centralManager?.scanForPeripheralsWithServices(nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
 	}
-	 
     
     func centralManagerDidUpdateState(central: CBCentralManager) {
         if (central.state == CBCentralManagerState.PoweredOn) {
@@ -67,6 +64,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
     }
     
     // MARK: UITableViewDataSource
+    
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
@@ -82,8 +80,5 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         cell.displayPeripheral = peripherals[indexPath.row]
         return cell
     }
-   
-
-
 }
 
