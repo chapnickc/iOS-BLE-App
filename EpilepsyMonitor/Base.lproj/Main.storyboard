@@ -66,7 +66,7 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pbT-qk-Hvr">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pbT-qk-Hvr" customClass="ScanButton" customModule="EpilepsyMonitor" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="513" width="320" height="55"/>
                                 <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
@@ -74,7 +74,7 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="scanButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="n7h-wR-4Bo"/>
+                                    <action selector="scanningButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8IF-Bk-zFJ"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -82,7 +82,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <connections>
-                        <outlet property="scanButton" destination="pbT-qk-Hvr" id="BJD-Kc-gcA"/>
+                        <outlet property="scanningButton" destination="pbT-qk-Hvr" id="etj-tn-mKM"/>
                         <outlet property="tableView" destination="EmS-d6-WLf" id="s1k-Kx-6wF"/>
                     </connections>
                 </viewController>
