@@ -31,7 +31,6 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
     // for view refresh time
     var viewReloadTimer: NSTimer?
    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
@@ -91,6 +90,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         
         updateViewForScanning()
         let triggerTime = (Int64(NSEC_PER_SEC) * 10)
+        
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime),
 		               dispatch_get_main_queue(),
 		               { () -> Void in
@@ -158,7 +158,7 @@ extension ViewController: CBPeripheralDelegate {
 }
 
 
-extension ViewController: DeviceCellDelegate{
+extension ViewController: DeviceCellDelegate {
     
 	func connectPressed(peripheral: CBPeripheral) {
         /*
@@ -174,23 +174,6 @@ extension ViewController: DeviceCellDelegate{
         
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
