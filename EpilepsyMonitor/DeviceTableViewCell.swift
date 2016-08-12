@@ -7,13 +7,26 @@
 //
 
 import UIKit
+import CoreBluetooth
+
+protocol DeviceCellDelegate: class {
+    func connectPressed(peripheral: CBPeripheral)
+}
 
 class DeviceTableViewCell: UITableViewCell {
     
     @IBOutlet weak var deviceNameLabel: UILabel!
     @IBOutlet weak var deviceRssiLabel: UILabel!
+    @IBOutlet weak var connectButton: UIButton!
+    
+    var delegate: DeviceCellDelegate?
     
     var displayPeripheral: DisplayPeripheral? {
+        /*
+         The didSet function extracts relevant device data
+         when passed a DisplayPeripheral object.
+         It also updates the signal strength from each device while scanning.
+        */
 		didSet {
 			if let deviceName = displayPeripheral!.peripheral?.name {
 				deviceNameLabel.text = deviceName.isEmpty ? "No Device Name" : deviceName
@@ -25,8 +38,16 @@ class DeviceTableViewCell: UITableViewCell {
             if let rssi = displayPeripheral!.lastRSSI {
                 deviceRssiLabel.text = "\(rssi) dB"
             }
+            
+			connectButton.hidden = !(displayPeripheral?.isConnectable!)!
         }
     }
+    
+    @IBAction func connectButtonPressed(sender: AnyObject) {
+        print("Connect pressed on \(self.deviceNameLabel)")
+        delegate?.connectPressed((displayPeripheral?.peripheral)!)
+    }
+    
 
     override func awakeFromNib() {
         super.awakeFromNib()
