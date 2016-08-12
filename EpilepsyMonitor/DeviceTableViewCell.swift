@@ -17,7 +17,8 @@ class DeviceTableViewCell: UITableViewCell {
     
     @IBOutlet weak var deviceNameLabel: UILabel!
     @IBOutlet weak var deviceRssiLabel: UILabel!
-    @IBOutlet weak var connectButton: UIButton!
+    @IBOutlet weak var connectButton: ConnectButton!
+    
     
     var delegate: DeviceCellDelegate?
     
@@ -46,6 +47,12 @@ class DeviceTableViewCell: UITableViewCell {
     @IBAction func connectButtonPressed(sender: AnyObject) {
         print("Connect pressed on \(self.deviceNameLabel.text)")
         delegate?.connectPressed((displayPeripheral?.peripheral)!)
+        connectButton.buttonColorScheme(true)
+        
+        
+//        let connectedColor = self.connectButton.currentTitleColor.CGColor
+//        connectButton.setTitle("Connected", forState: UIControlState.Selected)
+        
     }
     
 
