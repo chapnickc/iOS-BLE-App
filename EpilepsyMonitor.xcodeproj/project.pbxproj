@@ -89,10 +89,10 @@
 			children = (
 				77649B951D5B9E1B0031C417 /* AppDelegate.swift */,
 				77649B971D5B9E1B0031C417 /* ViewController.swift */,
+				77649BB71D5B9EA70031C417 /* DeviceTableViewCell.swift */,
+				77649B991D5B9E1B0031C417 /* Main.storyboard */,
 				77DD96F81D5D5C4F00EDE88A /* ScanButton.swift */,
 				77DD96FA1D5D6BB600EDE88A /* ConnectButton.swift */,
-				77649B991D5B9E1B0031C417 /* Main.storyboard */,
-				77649BB71D5B9EA70031C417 /* DeviceTableViewCell.swift */,
 				77649B9C1D5B9E1B0031C417 /* Assets.xcassets */,
 				77649B9E1D5B9E1B0031C417 /* LaunchScreen.storyboard */,
 				77649BA11D5B9E1B0031C417 /* Info.plist */,
