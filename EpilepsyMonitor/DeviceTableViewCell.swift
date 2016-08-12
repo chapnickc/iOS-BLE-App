@@ -47,12 +47,13 @@ class DeviceTableViewCell: UITableViewCell {
     @IBAction func connectButtonPressed(sender: AnyObject) {
         print("Connect pressed on \(self.deviceNameLabel.text)")
         delegate?.connectPressed((displayPeripheral?.peripheral)!)
-        connectButton.buttonColorScheme(true)
         
-        
-//        let connectedColor = self.connectButton.currentTitleColor.CGColor
-//        connectButton.setTitle("Connected", forState: UIControlState.Selected)
-        
+        if (displayPeripheral?.peripheral?.state == .Connecting) || (displayPeripheral?.peripheral?.state == .Connected) {
+            connectButton.buttonColorScheme(true)
+        }
+        else {
+            connectButton.buttonColorScheme(false)
+        }
     }
     
 
