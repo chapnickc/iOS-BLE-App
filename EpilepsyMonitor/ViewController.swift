@@ -125,6 +125,8 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         print("Added \(peripheral.name)")
     }
     
+    
+    
     // MARK: UITableViewDataSource
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -155,6 +157,10 @@ extension ViewController: CBPeripheralDelegate {
 		print("Connected to \(peripheral.name)")
 		peripheral.discoverServices(nil)
 	}
+    
+    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+        print("Canceled connection to \(peripheral.name)")
+    }
 }
 
 
@@ -171,6 +177,13 @@ extension ViewController: DeviceCellDelegate {
 			peripheral.delegate = self
 			centralManager?.connectPeripheral(peripheral, options: nil)
 		}
+        
+        if peripheral.state == .Connected {
+            centralManager?.cancelPeripheralConnection(peripheral)
+        }
+        
+//        if peripheral.state == .Connected {
+//        }
         
 	}
 }
