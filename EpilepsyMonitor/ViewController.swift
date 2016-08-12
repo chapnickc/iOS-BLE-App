@@ -96,6 +96,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 		               { () -> Void in
                             if self.centralManager!.isScanning {
                                 self.centralManager?.stopScan()
+                                self.updateViewForStopScanning()
                             }
                        })
 	}
@@ -170,6 +171,7 @@ extension ViewController: DeviceCellDelegate{
 			peripheral.delegate = self
 			centralManager?.connectPeripheral(peripheral, options: nil)
 		}
+        
 	}
 }
 
