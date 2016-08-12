@@ -18,27 +18,25 @@ struct DisplayPeripheral{
 
 
 class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerDelegate {
+    
+    // Interface Outlets
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var scanningButton: ScanButton!
 
     // BLE
     var centralManager: CBCentralManager?
     var selectedPeripheral: CBPeripheral?
     var peripherals: [DisplayPeripheral] = []
     
-    var viewReloadTimer: NSTimer?               // for view refresh time
-    
+    // for view refresh time
+    var viewReloadTimer: NSTimer?
    
-    
-    // Interface Outlets
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var scanButton: UIButton!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
 		centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
     }
-    
     
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
@@ -55,22 +53,34 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 		viewReloadTimer?.invalidate()
 	}
     
+    // Scanning Functions
+    
     func refreshScanView() {
         if peripherals.count > 1 && centralManager!.isScanning {
             tableView.reloadData()
 		}
     }
     
+    func updateViewForScanning(){
+        scanningButton.buttonColorScheme(true)
+    }
+    
+    func updateViewForStopScanning(){
+        scanningButton.buttonColorScheme(false)
+    }
+    
     // MARK: Interface Actions
 
-    @IBAction func scanButtonPressed(sender: AnyObject) {
+    @IBAction func scanningButtonPressed(sender: AnyObject) {
         if centralManager!.isScanning {
 			centralManager?.stopScan()
+            updateViewForStopScanning()
 		}
         else {
 			startScanning()
 		}
     }
+    
     
     // MARK: CBCentralManagerDelegate
     
@@ -79,6 +89,7 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
 		peripherals = []
 		self.centralManager?.scanForPeripheralsWithServices(nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
         
+        updateViewForScanning()
         let triggerTime = (Int64(NSEC_PER_SEC) * 10)
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime),
 		               dispatch_get_main_queue(),
@@ -140,7 +151,7 @@ extension ViewController: CBPeripheralDelegate {
 	}
 	
 	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-		print("Peripheral connected")
+		print("Connected to \(peripheral.name)")
 		peripheral.discoverServices(nil)
 	}
 }
