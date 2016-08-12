@@ -14,7 +14,9 @@ class ScanButton: UIButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        layer.borderColor = UIColor.greenColor().CGColor
+        // add a layer to the button
+        layer.borderWidth = 1.5
+        //layer.borderColor = UIColor.redColor().CGColor
     }
     
     func buttonColorScheme(isScanning: Bool) {
@@ -23,6 +25,10 @@ class ScanButton: UIButton {
         
         let titleColor = isScanning ? UIColor.redColor() : UIColor.whiteColor()
         setTitleColor(titleColor, forState: .Normal)
+        
+        backgroundColor = isScanning ? UIColor.clearColor() : UIColor.blueColor()
+        
+        layer.borderColor = isScanning ? UIColor.redColor().CGColor : UIColor.blueColor().CGColor
         
     }
 
