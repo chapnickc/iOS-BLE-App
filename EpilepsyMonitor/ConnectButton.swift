@@ -13,8 +13,8 @@ class ConnectButton: UIButton {
     var connectTitleColor = UIColor(red: 102/255.0, green: 255/255.0, blue: 102/255.0, alpha: 1)
     var connectBackgroundColor = UIColor(red: 102/255.0, green: 102/255.0, blue: 102/255.0, alpha: 1)
     
-    var connectedTitleColor = UIColor(red: 102/255.0, green: 102/255.0, blue: 102/255.0, alpha: 1)
-    var connectedBackgroundColor = UIColor(red: 102/255.0, green: 255/255.0, blue: 102/255.0, alpha: 1)
+    var connectedTitleColor = UIColor.whiteColor()
+    var connectedBackgroundColor = UIColor.redColor()
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -26,7 +26,7 @@ class ConnectButton: UIButton {
     }
     
     func buttonColorScheme(isConnected: Bool) {
-        let title = isConnected ? "Connected" : "Connect"
+        let title = isConnected ? "Disconnect" : "Connect"
         setTitle(title, forState: UIControlState.Normal)
         
         let titleColor = isConnected ? connectedTitleColor : connectTitleColor
