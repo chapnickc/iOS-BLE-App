@@ -44,7 +44,7 @@ class DeviceTableViewCell: UITableViewCell {
     }
     
     @IBAction func connectButtonPressed(sender: AnyObject) {
-        print("Connect pressed on \(self.deviceNameLabel)")
+        print("Connect pressed on \(self.deviceNameLabel.text)")
         delegate?.connectPressed((displayPeripheral?.peripheral)!)
     }
     
