@@ -19,11 +19,16 @@ struct DisplayPeripheral{
 
 class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerDelegate {
 
+    // BLE
     var centralManager: CBCentralManager?
+    var selectedPeripheral: CBPeripheral?
     var peripherals: [DisplayPeripheral] = []
-    var viewReloadTimer: NSTimer?
+    
+    var viewReloadTimer: NSTimer?               // for view refresh time
+    
    
     
+    // Interface Outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var scanButton: UIButton!
     
@@ -55,6 +60,8 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
             tableView.reloadData()
 		}
     }
+    
+    // MARK: Interface Actions
 
     @IBAction func scanButtonPressed(sender: AnyObject) {
         if centralManager!.isScanning {
@@ -120,7 +127,60 @@ class ViewController: UIViewController, UITableViewDataSource, CBCentralManagerD
         let cell = tableView.dequeueReusableCellWithIdentifier("DeviceTableViewCell", forIndexPath: indexPath) as! DeviceTableViewCell
         
         cell.displayPeripheral = peripherals[indexPath.row]
+        cell.delegate = self
         return cell
     }
+    
+    
 }
+
+extension ViewController: CBPeripheralDelegate {
+	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+		print("Error connecting peripheral: \(error?.localizedDescription)")
+	}
+	
+	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+		print("Peripheral connected")
+		peripheral.discoverServices(nil)
+	}
+}
+
+
+extension ViewController: DeviceCellDelegate{
+    
+	func connectPressed(peripheral: CBPeripheral) {
+        /*
+         Check if the selected peripheral is connected,
+         if not reassign selectedPeripheral and set the
+         delegate of the peripheral.
+        */
+		if peripheral.state != .Connected {
+			selectedPeripheral = peripheral
+			peripheral.delegate = self
+			centralManager?.connectPeripheral(peripheral, options: nil)
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
