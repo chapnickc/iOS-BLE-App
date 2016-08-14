@@ -15,6 +15,8 @@
 		77649BAB1D5B9E1B0031C417 /* EpilepsyMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77649BAA1D5B9E1B0031C417 /* EpilepsyMonitorTests.swift */; };
 		77649BB61D5B9E2B0031C417 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77649BB51D5B9E2B0031C417 /* CoreBluetooth.framework */; };
 		77649BB81D5B9EA70031C417 /* DeviceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77649BB71D5B9EA70031C417 /* DeviceTableViewCell.swift */; };
+		7782D6621D60260C0032F305 /* ServiceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7782D6611D60260C0032F305 /* ServiceTableViewCell.swift */; };
+		7782D6661D6029620032F305 /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7782D6651D6029620032F305 /* DashboardViewController.swift */; };
 		77DD96F91D5D5C4F00EDE88A /* ScanButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77DD96F81D5D5C4F00EDE88A /* ScanButton.swift */; };
 		77DD96FB1D5D6BB600EDE88A /* ConnectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77DD96FA1D5D6BB600EDE88A /* ConnectButton.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +44,8 @@
 		77649BAC1D5B9E1B0031C417 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77649BB51D5B9E2B0031C417 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		77649BB71D5B9EA70031C417 /* DeviceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceTableViewCell.swift; sourceTree = "<group>"; };
+		7782D6611D60260C0032F305 /* ServiceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTableViewCell.swift; sourceTree = "<group>"; };
+		7782D6651D6029620032F305 /* DashboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DashboardViewController.swift; path = ../DashboardViewController.swift; sourceTree = "<group>"; };
 		77DD96F81D5D5C4F00EDE88A /* ScanButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanButton.swift; sourceTree = "<group>"; };
 		77DD96FA1D5D6BB600EDE88A /* ConnectButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,9 +92,11 @@
 			isa = PBXGroup;
 			children = (
 				77649B951D5B9E1B0031C417 /* AppDelegate.swift */,
+				7782D6651D6029620032F305 /* DashboardViewController.swift */,
 				77649B971D5B9E1B0031C417 /* ScanningViewController.swift */,
 				77649BB71D5B9EA70031C417 /* DeviceTableViewCell.swift */,
 				77649B991D5B9E1B0031C417 /* Main.storyboard */,
+				7782D6611D60260C0032F305 /* ServiceTableViewCell.swift */,
 				77DD96F81D5D5C4F00EDE88A /* ScanButton.swift */,
 				77DD96FA1D5D6BB600EDE88A /* ConnectButton.swift */,
 				77649B9C1D5B9E1B0031C417 /* Assets.xcassets */,
@@ -211,6 +217,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				77DD96FB1D5D6BB600EDE88A /* ConnectButton.swift in Sources */,
+				7782D6661D6029620032F305 /* DashboardViewController.swift in Sources */,
+				7782D6621D60260C0032F305 /* ServiceTableViewCell.swift in Sources */,
 				77DD96F91D5D5C4F00EDE88A /* ScanButton.swift in Sources */,
 				77649B981D5B9E1B0031C417 /* ScanningViewController.swift in Sources */,
 				77649BB81D5B9EA70031C417 /* DeviceTableViewCell.swift in Sources */,

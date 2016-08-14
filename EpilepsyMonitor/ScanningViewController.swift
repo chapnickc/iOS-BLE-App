@@ -52,6 +52,16 @@ class ScanningViewController: UIViewController, UITableViewDataSource, CBCentral
 		viewReloadTimer?.invalidate()
 	}
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        /*
+         Pass the selectedPeripheral to the destinationViewController 
+         */
+        
+        if let destinationViewController = segue.destinationViewController as? DashboardViewController {
+           destinationViewController.peripheral = selectedPeripheral
+        }
+    }
+    
     // Scanning Functions
     
     func refreshScanView() {
