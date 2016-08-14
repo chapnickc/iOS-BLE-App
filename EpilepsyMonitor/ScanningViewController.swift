@@ -17,7 +17,7 @@ struct DisplayPeripheral{
 }
 
 
-class ScanningViewController: UIViewController, UITableViewDataSource, CBCentralManagerDelegate {
+class ScanningViewController: UIViewController, UITableViewDataSource {
     
     // Interface Outlets
     @IBOutlet weak var tableView: UITableView!
@@ -53,16 +53,14 @@ class ScanningViewController: UIViewController, UITableViewDataSource, CBCentral
 	}
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        /*
-         Pass the selectedPeripheral to the destinationViewController 
-         */
+        /* Pass the selectedPeripheral to the destinationViewController */
         
         if let destinationViewController = segue.destinationViewController as? DashboardViewController {
            destinationViewController.peripheral = selectedPeripheral
         }
     }
     
-    // Scanning Functions
+    // MARK: Scanning Functions
     
     func refreshScanView() {
         if peripherals.count > 1 && centralManager!.isScanning {
@@ -90,6 +88,51 @@ class ScanningViewController: UIViewController, UITableViewDataSource, CBCentral
 		}
     }
     
+    // MARK: UITableViewDataSource
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return peripherals.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceTableViewCell", forIndexPath: indexPath) as! DeviceTableViewCell
+        
+       
+        cell.displayPeripheral = peripherals[indexPath.row]
+        cell.delegate = self
+        return cell
+    }
+}
+
+
+extension ScanningViewController: DeviceCellDelegate {
+    
+	func connectPressed(peripheral: CBPeripheral) {
+        /*
+         Check if the selected peripheral is connected. 
+         If not reassign selectedPeripheral, set peripheral's delegate property and
+         connect to the peripheral.
+        */
+        
+		if peripheral.state != .Connected {
+			selectedPeripheral = peripheral
+			peripheral.delegate = self
+			centralManager?.connectPeripheral(peripheral, options: nil)
+		}
+        
+        if peripheral.state == .Connected {
+            centralManager?.cancelPeripheralConnection(peripheral)
+        }
+	}
+}
+
+
+
+extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate {
     
     // MARK: CBCentralManagerDelegate
     
@@ -132,35 +175,11 @@ class ScanningViewController: UIViewController, UITableViewDataSource, CBCentral
 		let displayPeripheral = DisplayPeripheral(peripheral: peripheral, lastRSSI: RSSI, isConnectable: isConnectable)
 		peripherals.append(displayPeripheral)
 		tableView.reloadData()
-        print("Added \(peripheral.name)")
     }
     
     
+    // MARK: CBPeripheralDelegate
     
-    
-    // MARK: UITableViewDataSource
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return peripherals.count
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceTableViewCell", forIndexPath: indexPath) as! DeviceTableViewCell
-        
-       
-        cell.displayPeripheral = peripherals[indexPath.row]
-        cell.delegate = self
-        return cell
-    }
-    
-    
-}
-
-extension ScanningViewController: CBPeripheralDelegate {
 	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
 		print("Error connecting peripheral: \(error?.localizedDescription)")
 	}
@@ -175,32 +194,6 @@ extension ScanningViewController: CBPeripheralDelegate {
         print("Canceled connection to \(peripheral.name)")
     }
 }
-
-
-extension ScanningViewController: DeviceCellDelegate {
-    
-	func connectPressed(peripheral: CBPeripheral) {
-        /*
-         Check if the selected peripheral is connected,
-         if not reassign selectedPeripheral and set the
-         delegate of the peripheral.
-        */
-		if peripheral.state != .Connected {
-			selectedPeripheral = peripheral
-			peripheral.delegate = self
-			centralManager?.connectPeripheral(peripheral, options: nil)
-            
-		}
-        
-        if peripheral.state == .Connected {
-            centralManager?.cancelPeripheralConnection(peripheral)
-        }
-        
-        
-	}
-}
-
-
 
 
 
