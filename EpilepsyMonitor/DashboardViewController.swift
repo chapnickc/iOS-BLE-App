@@ -67,14 +67,9 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
 		}
 		
 		peripheral.services?.forEach({ (service) in
-            
-            print("\(service.UUID)")
-            
 			services.append(service)
 			tableView.reloadData()
 			peripheral.discoverCharacteristics(nil, forService: service)
-            
-            
 		})
     }
     
@@ -82,8 +77,26 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         if error != nil {
 			print("Error discovering service characteristics: \(error?.localizedDescription)")
 		}
-		
+        
+        for characteristic in service.characteristics! {
+            print("\(service.UUID): \(characteristic.UUID)")
+        }
+        
+//        service.characteristics?.forEach({ (characteristic) in
+        
+//            print("\(service.UUID): \(characteristic.UUID) --- \(characteristic.value)")
+//            print("\(characteristic.descriptors)---\(characteristic.properties)")
+//        })
+        
     }
     
-
 }
+
+
+
+
+
+
+
+
+
