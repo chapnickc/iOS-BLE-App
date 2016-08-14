@@ -137,6 +137,7 @@ class ScanningViewController: UIViewController, UITableViewDataSource, CBCentral
     
     
     
+    
     // MARK: UITableViewDataSource
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -166,6 +167,7 @@ extension ScanningViewController: CBPeripheralDelegate {
 	
 	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
 		print("Connected to \(peripheral.name)")
+        performSegueWithIdentifier("PeripheralConnectedSegue", sender: self)
 		peripheral.discoverServices(nil)
 	}
     

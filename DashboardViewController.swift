@@ -9,14 +9,29 @@
 import UIKit
 import CoreBluetooth
 
-class DashboardViewController: UIViewController, UITableViewDataSource, CBPeripheralDelegate{
+class DashboardViewController: UIViewController, UITableViewDataSource, CBPeripheralDelegate {
     
     var peripheral: CBPeripheral?
     var services: [CBService] = []
+    var rssiReloadTimer: NSTimer?
+    
+    @IBOutlet weak var peripheralLabel: UILabel!
+    @IBOutlet weak var tableView: UITableView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        tableView.dataSource = self
+        
+        peripheral?.delegate = self
+        peripheralLabel.text = peripheral?.name
+        
+        rssiReloadTimer = NSTimer.scheduledTimerWithTimeInterval(1.0,
+                                                                 target: self,
+                                                                 selector: #selector(DashboardViewController.refreshRSSI),
+                                                                 userInfo: nil,
+                                                                 repeats: true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,26 +39,50 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         // Dispose of any resources that can be recreated.
     }
     
+    func refreshRSSI() {
+        peripheral?.readRSSI()
+    }
+    
     
     // MARK: UITableViewDataSource
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return services.count
     }
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        <#code#>
+        let cell = tableView.dequeueReusableCellWithIdentifier("ServiceTableViewCell", forIndexPath: indexPath) as! ServiceTableViewCell
+        let serviceName = services[indexPath.row].UUID
+        cell.serviceNameLabel.text = "\(serviceName)"
+        
+        return cell
     }
     
     // MARK: CBPeripheralDelegate
     
     func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-        <#code#>
+		if error != nil {
+			print("Error discovering services: \(error?.localizedDescription)")
+		}
+		
+		peripheral.services?.forEach({ (service) in
+            
+            print("\(service.UUID)")
+            
+			services.append(service)
+			tableView.reloadData()
+			peripheral.discoverCharacteristics(nil, forService: service)
+            
+            
+		})
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        <#code#>
+        if error != nil {
+			print("Error discovering service characteristics: \(error?.localizedDescription)")
+		}
+		
     }
     
 
