@@ -55,9 +55,15 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         /* Pass the selectedPeripheral to the destinationViewController */
         
-        if let destinationViewController = segue.destinationViewController as? DashboardViewController {
-           destinationViewController.peripheral = selectedPeripheral
+        if segue.identifier == "PeripheralConnectedSegue" {
+            if let dashboardViewController = segue.destinationViewController as? DashboardViewController {
+               dashboardViewController.peripheral = selectedPeripheral
+            }
         }
+        
+//        if let destinationViewController = segue.destinationViewController as? DashboardViewController {
+//           destinationViewController.peripheral = selectedPeripheral
+//        }
     }
     
     // MARK: Scanning Functions
