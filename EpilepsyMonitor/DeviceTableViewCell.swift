@@ -24,10 +24,10 @@ class DeviceTableViewCell: UITableViewCell {
     
     var displayPeripheral: DisplayPeripheral? {
         /*
-         The didSet function extracts relevant device data
-         when passed a DisplayPeripheral object.
-         It also updates the signal strength from each device while scanning.
-        */
+         * The didSet function extracts relevant device data
+         * when passed a DisplayPeripheral object.
+         * It also updates the signal strength from each device while scanning.
+         */
 		didSet {
 			if let deviceName = displayPeripheral!.peripheral?.name {
 				deviceNameLabel.text = deviceName.isEmpty ? "No Device Name" : deviceName
@@ -64,7 +64,6 @@ class DeviceTableViewCell: UITableViewCell {
 
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
         // Configure the view for the selected state
     }
 

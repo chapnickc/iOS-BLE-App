@@ -60,10 +60,6 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
                dashboardViewController.peripheral = selectedPeripheral
             }
         }
-        
-//        if let destinationViewController = segue.destinationViewController as? DashboardViewController {
-//           destinationViewController.peripheral = selectedPeripheral
-//        }
     }
     
     // MARK: Scanning Functions
@@ -193,7 +189,6 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
 	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
 		print("Connected to \(peripheral.name)")
         performSegueWithIdentifier("PeripheralConnectedSegue", sender: self)
-		peripheral.discoverServices(nil)
 	}
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {

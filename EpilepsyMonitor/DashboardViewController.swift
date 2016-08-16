@@ -15,6 +15,14 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     var services: [CBService] = []
     var rssiReloadTimer: NSTimer?
     
+    let heartRateServiceUUID = CBUUID(string: "180D")
+    let heartRateMeasurementUUID = CBUUID(string: "2A37")
+    
+//    var serviceUUIDS = [CBUUID] = []
+    
+    
+    
+    
     @IBOutlet weak var peripheralLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
@@ -25,12 +33,14 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         
         peripheral?.delegate = self
         peripheralLabel.text = peripheral?.name
+        peripheral?.discoverServices(nil)
         
         rssiReloadTimer = NSTimer.scheduledTimerWithTimeInterval(1.0,
                                                                  target: self,
                                                                  selector: #selector(DashboardViewController.refreshRSSI),
                                                                  userInfo: nil,
                                                                  repeats: true)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -64,12 +74,14 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
 		if error != nil {
 			print("Error discovering services: \(error?.localizedDescription)")
 		}
-		
-		peripheral.services?.forEach({ (service) in
-			services.append(service)
-			tableView.reloadData()
-			peripheral.discoverCharacteristics(nil, forService: service)
-		})
+        
+        for service in peripheral.services! {
+            services.append(service)
+            peripheral.discoverCharacteristics(nil, forService: service)
+            
+        }
+        
+		tableView.reloadData()
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
@@ -78,11 +90,10 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
 		}
         
         for characteristic in service.characteristics! {
-            print("\(service.UUID): \(characteristic.UUID)")
+            print("\(service): \(characteristic.UUID)")
         }
         
 //        service.characteristics?.forEach({ (characteristic) in
-        
 //            print("\(service.UUID): \(characteristic.UUID) --- \(characteristic.value)")
 //            print("\(characteristic.descriptors)---\(characteristic.properties)")
 //        })
