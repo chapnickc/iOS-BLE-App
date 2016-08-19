@@ -65,6 +65,9 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
     // MARK: Scanning Functions
     
     func refreshScanView() {
+        /*  Reloads the table data if the central manager 
+            is scanning for devices and there is more than one peripheral.
+        */
         if peripherals.count > 1 && centralManager!.isScanning {
             tableView.reloadData()
 		}
@@ -175,20 +178,27 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
         
 		let isConnectable = advertisementData["kCBAdvDataIsConnectable"] as! Bool
 		let displayPeripheral = DisplayPeripheral(peripheral: peripheral, lastRSSI: RSSI, isConnectable: isConnectable)
-		peripherals.append(displayPeripheral)
-		tableView.reloadData()
+        
+        if peripheral.name != nil {
+    		peripherals.append(displayPeripheral)
+    		tableView.reloadData()
+        }
+        
     }
     
     
     // MARK: CBPeripheralDelegate
     
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-		print("Error connecting peripheral: \(error?.localizedDescription)")
-	}
-	
-	func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+        /*  Go to the dashboard for the connected peripheral. 
+         *  Refer to the perpareForSegue() method above for more details.
+         */
 		print("Connected to \(peripheral.name)")
         performSegueWithIdentifier("PeripheralConnectedSegue", sender: self)
+	}
+    
+	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+		print("Error connecting peripheral: \(error?.localizedDescription)")
 	}
     
     func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {

@@ -11,7 +11,7 @@ import CoreBluetooth
 
 class DashboardViewController: UIViewController, UITableViewDataSource, CBPeripheralDelegate {
     
-    var peripheral: CBPeripheral?
+    var peripheral: CBPeripheral?                           // passed from the ScanningViewController
     var services: [CBService] = []
     var rssiReloadTimer: NSTimer?
     
@@ -19,9 +19,6 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     let heartRateMeasurementUUID = CBUUID(string: "2A37")
     
 //    var serviceUUIDS = [CBUUID] = []
-    
-    
-    
     
     @IBOutlet weak var peripheralLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -33,6 +30,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         
         peripheral?.delegate = self
         peripheralLabel.text = peripheral?.name
+        
         peripheral?.discoverServices(nil)
         
         rssiReloadTimer = NSTimer.scheduledTimerWithTimeInterval(1.0,
@@ -51,7 +49,6 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     func refreshRSSI() {
         peripheral?.readRSSI()
     }
-    
     
     // MARK: UITableViewDataSource
     
@@ -75,22 +72,31 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
 			print("Error discovering services: \(error?.localizedDescription)")
 		}
         
+        
+        // discover services for each charcteristic of the device.
+        // eventually we can skip this using the serviceUUIDS array.
         for service in peripheral.services! {
             services.append(service)
             peripheral.discoverCharacteristics(nil, forService: service)
-            
         }
         
 		tableView.reloadData()
     }
     
     func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        
+        // TODO: Tell the device to notify us for certain charactersitics. Then update service cell value in table view
+        
         if error != nil {
 			print("Error discovering service characteristics: \(error?.localizedDescription)")
 		}
         
         for characteristic in service.characteristics! {
-            print("\(service): \(characteristic.UUID)")
+            print("\(service): \(characteristic)")
+            
+            if characteristic.UUID == heartRateMeasurementUUID {
+                self.peripheral?.setNotifyValue(true, forCharacteristic: characteristic)
+            }
         }
         
 //        service.characteristics?.forEach({ (characteristic) in
@@ -100,6 +106,18 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         
     }
     
+    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        let data = characteristic.value!
+        
+        // construct an array of N elements, where N = data.length, with initial values of 0
+        var values = [UInt8](count: data.length, repeatedValue: 0)
+        
+        // copy data.length number of bytes into values array
+        data.getBytes(&values, length: data.length)
+        
+        let bpm = values[1]
+        print(bpm)
+    }
 }
 
 
