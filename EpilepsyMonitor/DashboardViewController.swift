@@ -15,10 +15,13 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     var services: [CBService] = []
     var rssiReloadTimer: NSTimer?
     
+    var lastBPM: UInt8?
+    
     let heartRateServiceUUID = CBUUID(string: "180D")
     let heartRateMeasurementUUID = CBUUID(string: "2A37")
     
 //    var serviceUUIDS = [CBUUID] = []
+    
     
     @IBOutlet weak var peripheralLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -59,8 +62,15 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("ServiceTableViewCell", forIndexPath: indexPath) as! ServiceTableViewCell
-        let serviceName = services[indexPath.row].UUID
+        
+        let service = services[indexPath.row]
+        let serviceName = service.UUID
+        
         cell.serviceNameLabel.text = "\(serviceName)"
+        
+        if service.UUID == heartRateServiceUUID && self.lastBPM != nil {
+           cell.serviceValueLabel.text = "\(self.lastBPM!)"
+        }
         
         return cell
     }
@@ -98,16 +108,15 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
                 self.peripheral?.setNotifyValue(true, forCharacteristic: characteristic)
             }
         }
-        
-//        service.characteristics?.forEach({ (characteristic) in
-//            print("\(service.UUID): \(characteristic.UUID) --- \(characteristic.value)")
-//            print("\(characteristic.descriptors)---\(characteristic.properties)")
-//        })
-        
     }
     
     func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        let data = characteristic.value!
+        /* TODO:    Distinguish between different characteristics using UUIDS.
+                    This works now since we set notifications only for
+                    the heart rate measurement characteristic.
+         */
+        
+        let data = characteristic.value!      // of type NSData
         
         // construct an array of N elements, where N = data.length, with initial values of 0
         var values = [UInt8](count: data.length, repeatedValue: 0)
@@ -116,7 +125,9 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         data.getBytes(&values, length: data.length)
         
         let bpm = values[1]
-        print(bpm)
+        self.lastBPM = bpm
+        
+        tableView.reloadData()
     }
 }
 
