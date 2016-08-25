@@ -16,9 +16,13 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     var rssiReloadTimer: NSTimer?
     
     var lastBPM: UInt8?
+    var lastTemp: UInt8?
     
     let heartRateServiceUUID = CBUUID(string: "180D")
     let heartRateMeasurementUUID = CBUUID(string: "2A37")
+    
+    let healthThermometerServiceUUID = CBUUID(string: "1809")
+    let tempMeasurementUUID = CBUUID(string: "2A1C")
     
 //    var serviceUUIDS = [CBUUID] = []
     
@@ -72,6 +76,10 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
            cell.serviceValueLabel.text = "\(self.lastBPM!)"
         }
         
+        if service.UUID == healthThermometerServiceUUID && self.lastTemp != nil {
+           cell.serviceValueLabel.text = "\(self.lastTemp!)"
+        }
+        
         return cell
     }
     
@@ -104,7 +112,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         for characteristic in service.characteristics! {
             print("\(service): \(characteristic)")
             
-            if characteristic.UUID == heartRateMeasurementUUID {
+            if characteristic.UUID == heartRateMeasurementUUID || characteristic.UUID == tempMeasurementUUID {
                 self.peripheral?.setNotifyValue(true, forCharacteristic: characteristic)
             }
         }
@@ -116,17 +124,34 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
                     the heart rate measurement characteristic.
          */
         
-        let data = characteristic.value!      // of type NSData
+        if characteristic.UUID == heartRateMeasurementUUID {
+            let data = characteristic.value!      // of type NSData
+            
+            // construct an array of N elements, where N = data.length, with initial values of 0
+            var values = [UInt8](count: data.length, repeatedValue: 0)
+            
+            // copy data.length number of bytes into values array
+            data.getBytes(&values, length: data.length)
+            
+            let bpm = values[1]
+            print("BPM: \(bpm)")
+            self.lastBPM = bpm
+        }
         
-        // construct an array of N elements, where N = data.length, with initial values of 0
-        var values = [UInt8](count: data.length, repeatedValue: 0)
-        
-        // copy data.length number of bytes into values array
-        data.getBytes(&values, length: data.length)
-        
-        let bpm = values[1]
-        self.lastBPM = bpm
-        
+        if characteristic.UUID == tempMeasurementUUID {
+             let data = characteristic.value!      // of type NSData
+            
+            // construct an array of N elements, where N = data.length, with initial values of 0
+            var values = [UInt8](count: data.length, repeatedValue: 0)
+            
+            // copy data.length number of bytes into values array
+            data.getBytes(&values, length: data.length)
+            
+            let temp = values[1]
+            print("Temp: \(temp)")
+            self.lastTemp = temp
+        }
+       
         tableView.reloadData()
     }
 }
