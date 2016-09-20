@@ -29,34 +29,34 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
     var peripherals: [DisplayPeripheral] = []
     
     // for view refresh time
-    var viewReloadTimer: NSTimer?
+    var viewReloadTimer: Timer?
    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
-		centralManager = CBCentralManager(delegate: self, queue: dispatch_get_main_queue())
+		centralManager = CBCentralManager(delegate: self, queue: DispatchQueue.main)
     }
     
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		viewReloadTimer =
-            NSTimer.scheduledTimerWithTimeInterval(1.0,
+            Timer.scheduledTimer(timeInterval: 1.0,
                                                    target: self,
                                                    selector: #selector(ScanningViewController.refreshScanView),
                                                    userInfo: nil,
                                                    repeats: true)
 	}
 	
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		viewReloadTimer?.invalidate()
 	}
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         /* Pass the selectedPeripheral to the destinationViewController */
         
         if segue.identifier == "PeripheralConnectedSegue" {
-            if let dashboardViewController = segue.destinationViewController as? DashboardViewController {
+            if let dashboardViewController = segue.destination as? DashboardViewController {
                dashboardViewController.peripheral = selectedPeripheral
             }
         }
@@ -83,7 +83,7 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
     
     // MARK: Interface Actions
 
-    @IBAction func scanningButtonPressed(sender: AnyObject) {
+    @IBAction func scanningButtonPressed(_ sender: AnyObject) {
         if centralManager!.isScanning {
 			centralManager?.stopScan()
             updateViewForStopScanning()
@@ -95,19 +95,19 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
     
     // MARK: UITableViewDataSource
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return peripherals.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceTableViewCell", forIndexPath: indexPath) as! DeviceTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceTableViewCell", for: indexPath) as! DeviceTableViewCell
         
        
-        cell.displayPeripheral = peripherals[indexPath.row]
+        cell.displayPeripheral = peripherals[(indexPath as NSIndexPath).row]
         cell.delegate = self
         return cell
     }
@@ -116,20 +116,20 @@ class ScanningViewController: UIViewController, UITableViewDataSource {
 
 extension ScanningViewController: DeviceCellDelegate {
     
-	func connectPressed(peripheral: CBPeripheral) {
+	func connectPressed(_ peripheral: CBPeripheral) {
         /*
          Check if the selected peripheral is connected. 
          If not reassign selectedPeripheral, set peripheral's delegate property and
          connect to the peripheral.
         */
         
-		if peripheral.state != .Connected {
+		if peripheral.state != .connected {
 			selectedPeripheral = peripheral
 			peripheral.delegate = self
-			centralManager?.connectPeripheral(peripheral, options: nil)
+			centralManager?.connect(peripheral, options: nil)
 		}
         
-        if peripheral.state == .Connected {
+        if peripheral.state == .connected {
             centralManager?.cancelPeripheralConnection(peripheral)
         }
 	}
@@ -144,14 +144,13 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
    	func startScanning(){
         print("Starting Scan")
 		peripherals = []
-		self.centralManager?.scanForPeripheralsWithServices(nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+		self.centralManager?.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
         
         updateViewForScanning()
         let triggerTime = (Int64(NSEC_PER_SEC) * 10)
         
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, triggerTime),
-		               dispatch_get_main_queue(),
-		               { () -> Void in
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(triggerTime) / Double(NSEC_PER_SEC),
+		               execute: { () -> Void in
                             if self.centralManager!.isScanning {
                                 self.centralManager?.stopScan()
                                 self.updateViewForStopScanning()
@@ -159,8 +158,8 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
                        })
 	}
     
-    func centralManagerDidUpdateState(central: CBCentralManager) {
-        if (central.state == CBCentralManagerState.PoweredOn) {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if (central.state ==  .poweredOn) {
             startScanning()
         }
         else {
@@ -168,8 +167,8 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
         }
     }
     
-    func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
-    	for (index, foundPeripheral) in peripherals.enumerate(){
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+    	for (index, foundPeripheral) in peripherals.enumerated(){
 			if foundPeripheral.peripheral?.identifier == peripheral.identifier {
 				peripherals[index].lastRSSI = RSSI
 				return
@@ -189,19 +188,19 @@ extension ScanningViewController: CBCentralManagerDelegate, CBPeripheralDelegate
     
     // MARK: CBPeripheralDelegate
     
-    func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         /*  Go to the dashboard for the connected peripheral. 
          *  Refer to the perpareForSegue() method above for more details.
          */
 		print("Connected to \(peripheral.name)")
-        performSegueWithIdentifier("PeripheralConnectedSegue", sender: self)
+        performSegue(withIdentifier: "PeripheralConnectedSegue", sender: self)
 	}
     
-	func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+	func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
 		print("Error connecting peripheral: \(error?.localizedDescription)")
 	}
     
-    func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         print("Canceled connection to \(peripheral.name)")
     }
 }

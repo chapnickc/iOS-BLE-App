@@ -10,7 +10,7 @@ import UIKit
 import CoreBluetooth
 
 protocol DeviceCellDelegate: class {
-    func connectPressed(peripheral: CBPeripheral)
+    func connectPressed(_ peripheral: CBPeripheral)
 }
 
 class DeviceTableViewCell: UITableViewCell {
@@ -40,15 +40,15 @@ class DeviceTableViewCell: UITableViewCell {
                 deviceRssiLabel.text = "\(rssi) dB"
             }
             
-			connectButton.hidden = !(displayPeripheral?.isConnectable!)!
+			connectButton.isHidden = !(displayPeripheral?.isConnectable!)!
         }
     }
     
-    @IBAction func connectButtonPressed(sender: AnyObject) {
+    @IBAction func connectButtonPressed(_ sender: AnyObject) {
         
         delegate?.connectPressed((displayPeripheral?.peripheral)!)
         
-        if (displayPeripheral?.peripheral?.state == .Connecting) || (displayPeripheral?.peripheral?.state == .Connected) {
+        if (displayPeripheral?.peripheral?.state == .connecting) || (displayPeripheral?.peripheral?.state == .connected) {
             connectButton.buttonColorScheme(true)
         }
         else {
@@ -62,7 +62,7 @@ class DeviceTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }

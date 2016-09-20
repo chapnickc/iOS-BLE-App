@@ -13,7 +13,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     
     var peripheral: CBPeripheral?                           // passed from the ScanningViewController
     var services: [CBService] = []
-    var rssiReloadTimer: NSTimer?
+    var rssiReloadTimer: Timer?
     
     var lastBPM: UInt8?
     var lastTemp: UInt8?
@@ -40,7 +40,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         
         peripheral?.discoverServices(nil)
         
-        rssiReloadTimer = NSTimer.scheduledTimerWithTimeInterval(1.0,
+        rssiReloadTimer = Timer.scheduledTimer(timeInterval: 1.0,
                                                                  target: self,
                                                                  selector: #selector(DashboardViewController.refreshRSSI),
                                                                  userInfo: nil,
@@ -59,24 +59,24 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     
     // MARK: UITableViewDataSource
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return services.count
     }
     
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("ServiceTableViewCell", forIndexPath: indexPath) as! ServiceTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ServiceTableViewCell", for: indexPath) as! ServiceTableViewCell
         
-        let service = services[indexPath.row]
-        let serviceName = service.UUID
+        let service = services[(indexPath as NSIndexPath).row]
+        let serviceName = service.uuid
         
         cell.serviceNameLabel.text = "\(serviceName)"
         
-        if service.UUID == heartRateServiceUUID && self.lastBPM != nil {
+        if service.uuid == heartRateServiceUUID && self.lastBPM != nil {
            cell.serviceValueLabel.text = "\(self.lastBPM!)"
         }
         
-        if service.UUID == healthThermometerServiceUUID && self.lastTemp != nil {
+        if service.uuid == healthThermometerServiceUUID && self.lastTemp != nil {
            cell.serviceValueLabel.text = "\(self.lastTemp!)"
         }
         
@@ -85,7 +85,7 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
     
     // MARK: CBPeripheralDelegate
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
 		if error != nil {
 			print("Error discovering services: \(error?.localizedDescription)")
 		}
@@ -95,13 +95,13 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         // eventually we can skip this using the serviceUUIDS array.
         for service in peripheral.services! {
             services.append(service)
-            peripheral.discoverCharacteristics(nil, forService: service)
+            peripheral.discoverCharacteristics(nil, for: service)
         }
         
 		tableView.reloadData()
     }
     
-    func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         
         // TODO: Tell the device to notify us for certain charactersitics. Then update service cell value in table view
         
@@ -112,40 +112,40 @@ class DashboardViewController: UIViewController, UITableViewDataSource, CBPeriph
         for characteristic in service.characteristics! {
             print("\(service): \(characteristic)")
             
-            if characteristic.UUID == heartRateMeasurementUUID || characteristic.UUID == tempMeasurementUUID {
-                self.peripheral?.setNotifyValue(true, forCharacteristic: characteristic)
+            if characteristic.uuid == heartRateMeasurementUUID || characteristic.uuid == tempMeasurementUUID {
+                self.peripheral?.setNotifyValue(true, for: characteristic)
             }
         }
     }
     
-    func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         /* TODO:    Distinguish between different characteristics using UUIDS.
                     This works now since we set notifications only for
                     the heart rate measurement characteristic.
          */
         
-        if characteristic.UUID == heartRateMeasurementUUID {
+        if characteristic.uuid == heartRateMeasurementUUID {
             let data = characteristic.value!      // of type NSData
             
             // construct an array of N elements, where N = data.length, with initial values of 0
-            var values = [UInt8](count: data.length, repeatedValue: 0)
+            var values = [UInt8](repeating: 0, count: data.count)
             
             // copy data.length number of bytes into values array
-            data.getBytes(&values, length: data.length)
+            (data as NSData).getBytes(&values, length: data.count)
             
             let bpm = values[1]
             print("BPM: \(bpm)")
             self.lastBPM = bpm
         }
         
-        if characteristic.UUID == tempMeasurementUUID {
+        if characteristic.uuid == tempMeasurementUUID {
              let data = characteristic.value!      // of type NSData
             
             // construct an array of N elements, where N = data.length, with initial values of 0
-            var values = [UInt8](count: data.length, repeatedValue: 0)
+            var values = [UInt8](repeating: 0, count: data.count)
             
             // copy data.length number of bytes into values array
-            data.getBytes(&values, length: data.length)
+            (data as NSData).getBytes(&values, length: data.count)
             
             let temp = values[1]
             print("Temp: \(temp)")

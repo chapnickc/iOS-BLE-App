@@ -166,9 +166,11 @@
 					77649B911D5B9E1B0031C417 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 3E3T2727L4;
+						LastSwiftMigration = 0800;
 					};
 					77649BA51D5B9E1B0031C417 = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 77649B911D5B9E1B0031C417;
 					};
 				};
@@ -361,6 +363,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Epilepsy-Monitor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -375,6 +378,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Epilepsy-Monitor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -386,6 +390,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.EpilepsyMonitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EpilepsyMonitor.app/EpilepsyMonitor";
 			};
 			name = Debug;
@@ -398,6 +403,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.EpilepsyMonitorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EpilepsyMonitor.app/EpilepsyMonitor";
 			};
 			name = Release;
