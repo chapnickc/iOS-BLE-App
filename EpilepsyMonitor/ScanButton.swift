@@ -15,6 +15,8 @@ class ScanButton: UIButton {
         
         // add a layer to the button
         layer.borderWidth = 1.5
+        layer.borderColor = UIColor(red: 11/255.0, green: 102/255.0, blue: 254/255.0, alpha: 1.0).cgColor
+
     }
     
     func buttonColorScheme(_ isScanning: Bool) {
